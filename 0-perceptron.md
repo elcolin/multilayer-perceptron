@@ -1,4 +1,4 @@
-# multilayer perceptron
+# 0 - Le perceptron
 
 ## Le Machine learning
 
@@ -9,7 +9,7 @@ On utilise un **algorithme d'optimisation** pour developper un **modele**: Il te
 Au lieu d'un simple fonction on utilise un reseau de fonctions connectees les unes aux autres, c'est un reseau de neurones.
 Plus il y a de fonctions, plus le reseau est profond et plus la machine peut realiser des taches complexes.
 
-## Le perceptron
+## Implementation d'un perceptron
 
 Le perceptron est l'unite de base d'un reseau de neurone. Il peut lineairement separe deux classes de points par ce que l'on appelle la **frontiere de decision**.
 
@@ -32,8 +32,18 @@ Exemple : Si le resultat est proche de 100% cela veut dire que le modele est acc
 
 Cette vraisemblance est obtenu en faisant le produit du resultat de la loi de Bernoulli.
 ![Vraisemblance](img/calcul-vraisemblance.png)  
+*Pourquoi faire le produit des probabilites et non la somme?*  
 ![Explication de l'usage du produit](img/probabilite-produit.png)  
 Les probabilites se situant entre 0 et 1, plus il y a de valeurs, plus la vraisemblance va tendre vers 0.
 Ce probleme peut etre contourne en usant de la fonction log : Elle permet de sortir les termes de la fonction pour faire la somme plutot que le produit tout en conservant l'ordre puisque c'est une fonction **monotone croissante**.
+Par usage, nous allons **maximiser la vraisemblance en minimisant** la fonction *-log(L)*.
 
 ![Log loss](img/log-loss.png)
+
+La division par le nombre de facteurs est facultatif mais permet de normaliser le resultat.
+
+### La descente de gradient
+
+Pour minimiser les erreurs du modele en ajustant les parametres W et le billet, il faut determiner la facon dont cette fonction varie en calculant la **derivee** (ou gradient) de Log Loss.  
+
+![Descente de Gradient](img/descente-gradient.png)
