@@ -118,3 +118,9 @@ def test_split_ratio(clean_df):
     sample = pd.DataFrame(clean_df[1::])
     assert_frame_equal(sample, v)
 
+def test_split_low_ratio(clean_df):
+    t, v = preprocess.split(clean_df, 0.1)
+    sample = pd.DataFrame(clean_df[:0:])
+    assert_frame_equal(sample, t)
+    sample = pd.DataFrame(clean_df[0::])
+    assert_frame_equal(sample, v)
