@@ -1,6 +1,8 @@
 import pandas as pd
 import argparse
 import sys
+import math
+import utils as u
 
 def load_dataset(path: str) -> pd.DataFrame:
     """Lit le CSV brut (sans en-tete) et le renvoie sous forme de DataFrame."""
@@ -12,6 +14,7 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     """Retire l'identifiant, convertit le label M/B en 1/0 et le place en premiere colonne."""
     df = df.drop(columns=0)
     df[1] = df[1].map({"M": 1, "B": 0})
+    u.normalize(df)
     return df
 
 
@@ -22,8 +25,13 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
 
 def split(df: pd.DataFrame, train_ratio: float) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Separe le DataFrame en (train, valid) selon train_ratio."""
-
-    pass
+    if len(df) == 0:
+        raise pd.errors.EmptyDataError
+    if (not isinstance(df, pd.DataFrame)):
+        raise TypeError
+    idx = len(df) * train_ratio
+    idx = math.floor(idx)
+    return(df[:idx:], df[idx::])
 
 
 def save(df: pd.DataFrame, path: str) -> None:
