@@ -3,6 +3,7 @@ import pandas as pd
 from    pandas.testing import assert_frame_equal
 import pytest
 from pathlib import Path
+import utils as u
 
 @pytest.fixture
 def raw_df(raw_csv: str) -> pd.DataFrame:
@@ -49,6 +50,13 @@ def test_load_dataset_permission_error(tmp_path: Path):
         p.chmod(0o000)
         preprocess.load_dataset(str(p))
 
+def test_load_dataset_binary_file(tmp_path: Path):
+    f = tmp_path / "binary.csv"
+    f.write_bytes(b"\x89PNG\r\n\x1a\n\x00\x00")
+    with pytest.raises(UnicodeDecodeError):
+        preprocess.load_dataset(str(f))
+
+
 # ---------- clean ----------
 
 def test_diagnosis_mapping(raw_df: pd.DataFrame, clean_df: pd.DataFrame):        # la 1re ligne est une donnée, pas un en-tête
@@ -58,19 +66,28 @@ def test_diagnosis_mapping(raw_df: pd.DataFrame, clean_df: pd.DataFrame):       
     assert_frame_equal(df, clean_df)
 
 # ---------- save ----------
-def normalize(df):
-    df = df.reset_index(drop=True)     # lignes → 0..n-1
-    df.columns = range(df.shape[1])    # colonnes → 0..m-1
-    return df
-
 def test_save_clean_dataset(tmp_path: Path, clean_df: pd.DataFrame):
     s = tmp_path / "s"
-    s.write_text("")
+    s.touch()
     preprocess.save(clean_df, path=str(s))
     cf = pd.read_csv(str(s), header=None)
     cf.columns = cf.columns.astype(int)
-    clean_df = normalize(clean_df)
+    clean_df = u.normalize(clean_df)
     assert_frame_equal(clean_df, cf, check_names=False)
+
+def test_save_invalid_dataset(tmp_path: Path):
+    f = tmp_path / "f"
+    f.touch()
+    s = "This shouldn't work"
+    with pytest.raises(TypeError):
+        preprocess.save(s, str(f))
+
+def test_save_empty_dataset(tmp_path: Path):
+    f = tmp_path / "f"
+    f.touch()
+    empty_dataset = pd.DataFrame()
+    with pytest.raises(pd.errors.EmptyDataError):
+        preprocess.save(empty_dataset, str(f))
 
 def test_save_empty_file_name(clean_df: pd.DataFrame):
     with pytest.raises(FileNotFoundError):
@@ -84,4 +101,20 @@ def test_save_no_perm_file(tmp_path: Path, clean_df: pd.DataFrame):
         preprocess.save(clean_df, str(p))
 
 # ---------- split ----------
-# def test_split_no_data
+def test_split_no_data():
+    with pytest.raises(pd.errors.EmptyDataError):
+        empty = pd.DataFrame()
+        preprocess.split(empty, 0.5)
+
+def test_split_nan():
+    with pytest.raises(TypeError):
+        s = "not a Dataframe"
+        preprocess.split(s, 0.2)
+
+def test_split_ratio(clean_df):
+    t, v = preprocess.split(clean_df, 0.5)
+    sample = pd.DataFrame(clean_df[:1:])
+    assert_frame_equal(sample, t)
+    sample = pd.DataFrame(clean_df[1::])
+    assert_frame_equal(sample, v)
+
