@@ -7,8 +7,14 @@ import utils as u
 def load_dataset(path: str) -> pd.DataFrame:
     """Lit le CSV brut (sans en-tete) et le renvoie sous forme de DataFrame."""
     df = pd.read_csv(path, header=None)
+    df[1].isin(["M", "B"]).all()
     return df
 
+def check_numeric_features(df: pd.DataFrame) -> None:
+    """Verifie que les colonnes de mesures (2 a la fin) sont numeriques."""
+    for col in df.columns[2:]:
+        if not pd.api.types.is_numeric_dtype(df[col]):
+            raise ValueError(f"column {col} is not numeric (dtype: {df[col].dtype})")
 
 def clean(df: pd.DataFrame) -> pd.DataFrame:
     """Retire l'identifiant, convertit le label M/B en 1/0 et le place en premiere colonne."""

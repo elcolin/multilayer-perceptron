@@ -56,6 +56,13 @@ def test_load_dataset_binary_file(tmp_path: Path):
     with pytest.raises(UnicodeDecodeError):
         preprocess.load_dataset(str(f))
 
+def test_load_dataset_non_numeric_feature(tmp_path: Path):
+    row = ["842302", "M"] + ["1.0"] * 30
+    row[5] = "abc"
+    f = tmp_path / "bad.csv"
+    f.write_text(",".join(row) + "\n")
+    with pytest.raises(ValueError):
+        preprocess.check_numeric_features(pd.read_csv(f, header=None))
 
 # ---------- clean ----------
 
