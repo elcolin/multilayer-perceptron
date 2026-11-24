@@ -3,8 +3,10 @@ import argparse
 import sys
 import math
 import utils as u
+from datetime import datetime
+from pathlib import Path
 
-def load_dataset(path: str) -> pd.DataFrame:
+def load_dataset(path: Path) -> pd.DataFrame:
     """Lit le CSV brut (sans en-tete) et le renvoie sous forme de DataFrame."""
     df = pd.read_csv(path, header=None)
     df[1].isin(["M", "B"]).all()
@@ -40,7 +42,7 @@ def split(df: pd.DataFrame, train_ratio: float) -> tuple[pd.DataFrame, pd.DataFr
     return(df[:idx:], df[idx::])
 
 
-def save(df: pd.DataFrame, path: str) -> None:
+def save(df: pd.DataFrame, path: Path) -> None:
     """Ecrit le DataFrame en CSV numerique, sans en-tete ni index."""
     if (len(df) == 0):
         raise pd.errors.EmptyDataError
@@ -51,13 +53,17 @@ def save(df: pd.DataFrame, path: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="...")
-    parser.add_argument("dataset") 
-    parser.add_argument("output")
+    parser.add_argument("--dataset", type=Path, default=Path("data/data.csv"))
+    parser.add_argument("--output", type=Path, default=Path("output"))
+    parser.add_argument("--train-ratio", type=float, default=0.8)
     args = parser.parse_args()
     try:
-        df = load_dataset(args.dataset)
+        df = load_dataset(Path.cwd() / args.dataset)
         df = clean(df)
-        save(df, args.output)
+        tf, vf = split(df, args.train_ratio)
+        save(tf, Path.cwd() / args.output / f"training_data_{datetime.now().strftime("%Y%m%d-%H%M%S")}.csv")
+        save(vf, Path.cwd() / args.output / f"validation_data_{datetime.now().strftime("%Y%m%d-%H%M%S")}.csv")
+
     except FileNotFoundError as e:
         print(f"error: file not found: {e.filename}", file=sys.stderr)
         sys.exit(1)
