@@ -28,6 +28,10 @@ def split(df: pd.DataFrame, train_ratio: float) -> tuple[pd.DataFrame, pd.DataFr
 
 def save(df: pd.DataFrame, path: str) -> None:
     """Ecrit le DataFrame en CSV numerique, sans en-tete ni index."""
+    if (len(df) == 0):
+        raise pd.errors.EmptyDataError
+    if (not isinstance(df, pd.DataFrame)):
+            raise TypeError
     df.to_csv(path, index=False, header=False)
 
 
@@ -49,6 +53,8 @@ def main() -> None:
     except pd.errors.EmptyDataError as e:
         print(f"error: {args.dataset}: file is empty", file=sys.stderr)
         sys.exit(1)
+    except UnicodeDecodeError as e:
+        print(f"error: fichier incompatible", file=sys.stderr)
 
 
 if __name__ == "__main__":
