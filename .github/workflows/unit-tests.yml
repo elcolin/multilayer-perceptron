@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  tests:
+  python-tests:
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -25,3 +25,15 @@ jobs:
 
       - name: Run tests
         run: python -m pytest -v
+
+  cpp-tests:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build and run C++ tests
+        run: make test_cpp
