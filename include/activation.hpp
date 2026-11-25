@@ -9,10 +9,10 @@
 
 struct Sigmoid
 {
-    static double apply(double z) {}
-    static double derivative(double z)
-    {
-    }
+    // static double apply(double z) {}
+    // static double derivative(double z)
+    // {
+    // }
 };
 
 struct Step
@@ -21,10 +21,10 @@ struct Step
 
 struct Tanh
 {
-    static double apply(double z) {}
-    static double derivative(double z)
-    {
-    }
+    // static double apply(double z) {}
+    // static double derivative(double z)
+    // {
+    // }
 };
 
 struct ReLU
