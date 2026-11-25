@@ -1,15 +1,17 @@
 #pragma once
 
 #include "activation.hpp"
+#include <vector>
 
-template <typename Activation = Sigmoid>
+template<typename Activation = Sigmoid>
 class Perceptron
 {
     private:
-    public:
-        Perceptron() = default;
-        ~Perceptron() = default;
+        std::vector<double> _weights; // un poids par feature (30)
+        double              _bias;
 
-        // double activate(double z) const { return Activation::apply(z); }
-        // double activateDerivative(double z) const { return Activation::derivative(z); }
+    public:
+        explicit Perceptron(std::size_t nInputs) : _weights(nInputs, 0.0), _bias(0.0) {}
+
+        double forward(const std::vector<double>& x) const { (void) x; return 0;};
 };

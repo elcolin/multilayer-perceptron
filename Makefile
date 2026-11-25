@@ -15,8 +15,7 @@ SRC_DIR		:= src
 OBJ_DIR		:= obj
 
 SRCS		:= main.cpp \
-			   dataset.cpp \
-			   perceptron.cpp
+			   dataset.cpp
 
 OBJS		:= $(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
 DEPS		:= $(OBJS:.o=.d)
