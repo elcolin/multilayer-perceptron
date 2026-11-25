@@ -3,9 +3,12 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <filesystem>
 
 Dataset loadCsv(const std::string& path)
 {
+    if (std::filesystem::path(path).extension() != ".csv")
+        throw std::runtime_error("wrong extension: " + path + " (expected .csv)");
     std::ifstream file(path);
     if (!file)
         throw std::runtime_error("cannot open " + path);

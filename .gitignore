@@ -5,3 +5,4 @@ mlp
 .venv/
 __pycache__/
 .pytest_cache/
+mlp_tests
