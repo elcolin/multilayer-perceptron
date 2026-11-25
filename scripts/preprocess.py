@@ -20,6 +20,10 @@ def check_numeric_features(df: pd.DataFrame) -> None:
 
 def clean(df: pd.DataFrame) -> pd.DataFrame:
     """Retire l'identifiant, convertit le label M/B en 1/0 et le place en premiere colonne."""
+    if (not isinstance(df, pd.DataFrame)):
+        raise TypeError
+    if (len(df) == 0):
+        raise pd.errors.EmptyDataError
     df = df.drop(columns=0)
     df[1] = df[1].map({"M": 1, "B": 0})
     u.normalize(df)

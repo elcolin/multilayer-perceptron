@@ -66,11 +66,21 @@ def test_load_dataset_non_numeric_feature(tmp_path: Path):
 
 # ---------- clean ----------
 
-def test_diagnosis_mapping(raw_df: pd.DataFrame, clean_df: pd.DataFrame):        # la 1re ligne est une donnée, pas un en-tête
+def test_clean_mapping(raw_df: pd.DataFrame, clean_df: pd.DataFrame):        # la 1re ligne est une donnée, pas un en-tête
     df = preprocess.clean(raw_df)
     assert not (df.equals(raw_df))
     
     assert_frame_equal(df, clean_df)
+
+def test_clean_empty_data():
+    empty_dataset = pd.DataFrame()
+    with pytest.raises(pd.errors.EmptyDataError):
+        preprocess.clean(empty_dataset)
+
+def test_clean_invalid_data():
+    s = "this shouldn't work"
+    with pytest.raises(TypeError):
+        preprocess.clean(s)
 
 # ---------- save ----------
 def test_save_clean_dataset(tmp_path: Path, clean_df: pd.DataFrame):
