@@ -1,5 +1,4 @@
 #pragma once
-
 #include <cmath>
 
 // Une fonction d'activation = une struct avec deux fonctions statiques :
@@ -9,7 +8,10 @@
 
 struct Sigmoid
 {
-    // static double apply(double z) {}
+    static double apply(double z) 
+    {
+        return 1.0 / (1.0 + std::exp(-z));
+    };
     // static double derivative(double z)
     // {
     // }
