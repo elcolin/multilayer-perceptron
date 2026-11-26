@@ -5,9 +5,11 @@ TEST_CASE("Constructor")
 {
     SUBCASE("Input number equals 0")
     {
-        CHECK_THROWS_WITH(Perceptron(0), doctest::Contains("empty"));
+        CHECK_THROWS_WITH(Perceptron(0), doctest::Contains("null"));
     }
 }
+
+using doctest::Approx;
 
 TEST_CASE("forward")
 {
@@ -22,5 +24,9 @@ TEST_CASE("forward")
     {
         std::vector<double> s{1.0};
         CHECK_THROWS_WITH(p.forward(s), doctest::Contains("size"));
+    }
+    SUBCASE("Forward")
+    {
+        CHECK(p.forward(x) == Approx(0.5));
     }
 }
